@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	// "github.com/"
 )
 
 func main() {
@@ -28,5 +29,6 @@ func index(w http.ResponseWriter, r *http.Request) {
 	}
 	templates := template.Must(template.ParseFiles(files...))
 	// TODO: threads
+
 	fmt.Println(templates)
 }
