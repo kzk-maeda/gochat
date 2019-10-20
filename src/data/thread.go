@@ -14,7 +14,11 @@ type Thread struct {
 
 // Get All Threads in the database and returns it
 func Threads() (threads []Thread, err error) {
-	rows, err := Db.Query("SELECT id, uuid, topic, user_id, created_at FROM threads ORDER BY created_at DESC")
+	sql, err := readSqlFile("data/sql/select_threads.sql")
+	if err != nil {
+		return nil, err
+	}
+	rows, err := Db.Query(sql)
 	if err != nil {
 		return
 	}
