@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"main/data"
 	"net/http"
-	// "github.com/"
 )
 
 func main() {
 	mux := http.NewServeMux()
-	files := http.FileServer(http.Dir("/public"))
+	files := http.FileServer(http.Dir("public/"))
 	mux.Handle("/static/", http.StripPrefix("/static/", files))
 
 	mux.HandleFunc("/", index)
@@ -23,12 +23,17 @@ func main() {
 
 func index(w http.ResponseWriter, r *http.Request) {
 	files := []string{
-		"templetes/layout.html",
-		"templetes/navbar.html",
-		"templetes/index.html",
+		"templates/layout.html",
+		"templates/navbar.html",
+		"templates/index.html",
 	}
 	templates := template.Must(template.ParseFiles(files...))
 	// TODO: threads
+	threads, err := data.Threads()
+	fmt.Println("threads: ", threads, " err: ", err)
+	if err == nil {
+		templates.ExecuteTemplate(w, "layout", threads)
+	}
 
 	fmt.Println(templates)
 }
