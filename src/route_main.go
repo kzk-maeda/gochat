@@ -8,6 +8,7 @@ import (
 )
 
 func index(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("route /index")
 	files := []string{
 		"templates/layout.html",
 		"templates/public.navbar.html",
