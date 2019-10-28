@@ -32,3 +32,20 @@ func Threads() (threads []Thread, err error) {
 	rows.Close()
 	return
 }
+
+// Create New Thread
+func (user *User) CreateThread(topic string) (conv Thread, err error) {
+	sql, err := readSqlFile("data/sql/insert_thread.sql")
+	if err != nil {
+		return
+	}
+	stmt, err := Db.Prepare(sql)
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+
+	err = stmt.QueryRow(createUUID(), topic, user.Id, time.Now()).
+		Scan(&conv.Id, &conv.Uuid, &conv.Topic, &conv.UserId, &conv.CreatedAt)
+	return
+}
