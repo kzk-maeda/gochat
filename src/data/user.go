@@ -50,6 +50,23 @@ func (user *User) Session() (session Session, err error) {
 	return
 }
 
+func (session *Session) Check() (valid bool, err error) {
+	sql, err := readSqlFile("data/sql/select_session_by_uuid.sql")
+	if err != nil {
+		return
+	}
+	err = Db.QueryRow(sql, session.Uuid).
+		Scan(&session.Id, &session.Uuid, &session.Email, &session.UserId, &session.CreatedAt)
+	if err != nil {
+		valid = false
+		return
+	}
+	if session.Id != 0 {
+		valid = true
+	}
+	return
+}
+
 // Get a single user given the email
 func UserByEmail(email string) (user User, err error) {
 	user = User{}
