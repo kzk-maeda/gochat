@@ -50,6 +50,23 @@ func (user *User) Session() (session Session, err error) {
 	return
 }
 
+func (session *Session) Check() (valid bool, err error) {
+	sql, err := readSqlFile("data/sql/select_session_by_uuid.sql")
+	if err != nil {
+		return
+	}
+	err = Db.QueryRow(sql, session.Uuid).
+		Scan(&session.Id, &session.Uuid, &session.Email, &session.UserId, &session.CreatedAt)
+	if err != nil {
+		valid = false
+		return
+	}
+	if session.Id != 0 {
+		valid = true
+	}
+	return
+}
+
 // Get a single user given the email
 func UserByEmail(email string) (user User, err error) {
 	user = User{}
@@ -83,5 +100,21 @@ func (user *User) Create() (err error) {
 		Scan(&user.Id, &user.Uuid, &user.CreatedAt)
 	fmt.Println("create user : ", err)
 
+	return
+}
+
+// Delete Session
+func (session *Session) DeleteByUUID() (err error) {
+	sql, err := readSqlFile("data/sql/delete_session_by_uuid.sql")
+	if err != nil {
+		return
+	}
+	stmt, err := Db.Prepare(sql)
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(session.Uuid)
 	return
 }
