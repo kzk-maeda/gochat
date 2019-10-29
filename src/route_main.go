@@ -2,25 +2,21 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"main/data"
 	"net/http"
 )
 
-func index(w http.ResponseWriter, r *http.Request) {
+func index(writer http.ResponseWriter, request *http.Request) {
 	fmt.Println("route /index")
-	files := []string{
-		"templates/layout.html",
-		"templates/public.navbar.html",
-		"templates/index.html",
-	}
-	templates := template.Must(template.ParseFiles(files...))
-	// TODO: threads
 	threads, err := data.Threads()
-	fmt.Println("threads: ", threads, " err: ", err)
-	if err == nil {
-		templates.ExecuteTemplate(w, "layout", threads)
+	if err != nil {
+		fmt.Println("Cannot get threads", err)
+	} else {
+		_, err := session(writer, request)
+		if err != nil {
+			generateHTML(writer, threads, "layout", "public.navbar", "index")
+		} else {
+			generateHTML(writer, threads, "layout", "private.navbar", "index")
+		}
 	}
-
-	fmt.Println(templates)
 }

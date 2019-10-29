@@ -13,7 +13,7 @@ var logger *log.Logger
 
 func session(writer http.ResponseWriter, request *http.Request) (sess data.Session, err error) {
 	cookie, err := request.Cookie("_cookie")
-	fmt.Println("cookie:", cookie.Value, " session:", sess, " error:", err)
+	// fmt.Println("cookie:", cookie.Value, " session:", sess, " error:", err)
 	if err == nil {
 		sess = data.Session{Uuid: cookie.Value}
 		if ok, _ := sess.Check(); !ok {

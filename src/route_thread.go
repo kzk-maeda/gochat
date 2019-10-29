@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"main/data"
 	"net/http"
 )
 
@@ -38,5 +39,22 @@ func createThread(writer http.ResponseWriter, request *http.Request) {
 			fmt.Println("Cannot create thread")
 		}
 		http.Redirect(writer, request, "/", 302)
+	}
+}
+
+// GET /thread/read
+func readThread(writer http.ResponseWriter, request *http.Request) {
+	vals := request.URL.Query()
+	uuid := vals.Get("id")
+	thread, err := data.ThreadByUUID(uuid)
+	if err != nil {
+		fmt.Println(err, " Cannot read thread")
+	} else {
+		_, err := session(writer, request)
+		if err != nil {
+			generateHTML(writer, &thread, "layout", "public.navbar", "public.thread")
+		} else {
+			generateHTML(writer, &thread, "layout", "private.navbar", "private.thread")
+		}
 	}
 }
