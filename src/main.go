@@ -20,6 +20,7 @@ func main() {
 	mux.HandleFunc("/thread/new", newThread)
 	mux.HandleFunc("/thread/read", readThread)
 	mux.HandleFunc("/thread/create", createThread)
+	mux.HandleFunc("/thread/post", postThread)
 
 	server := &http.Server{
 		Addr:    "0.0.0.0:8080",

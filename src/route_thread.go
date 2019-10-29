@@ -58,3 +58,31 @@ func readThread(writer http.ResponseWriter, request *http.Request) {
 		}
 	}
 }
+
+// POST /thread/post
+func postThread(writer http.ResponseWriter, request *http.Request) {
+	sess, err := session(writer, request)
+	if err != nil {
+		http.Redirect(writer, request, "/login", 302)
+	} else {
+		err = request.ParseForm()
+		if err != nil {
+			fmt.Println("Cannot parse form")
+		}
+		user, err := sess.User()
+		if err != nil {
+			fmt.Println("Cannot get user from session")
+		}
+		body := request.PostFormValue("body")
+		uuid := request.PostFormValue("uuid")
+		thread, err := data.ThreadByUUID(uuid)
+		if err != nil {
+			fmt.Println("Cannot read thread")
+		}
+		if _, err := user.CreatePost(thread, body); err != nil {
+			fmt.Println("Cannot Create Post")
+		}
+		url := fmt.Sprint("/thread/read?id=", uuid)
+		http.Redirect(writer, request, url, 302)
+	}
+}
