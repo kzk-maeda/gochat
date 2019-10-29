@@ -62,3 +62,14 @@ func authenticate(writer http.ResponseWriter, request *http.Request) {
 		http.Redirect(writer, request, "/login", 302)
 	}
 }
+
+// GET /logout
+func logout(writer http.ResponseWriter, request *http.Request) {
+	cookie, err := request.Cookie("_cookie")
+	if err != http.ErrNoCookie {
+		fmt.Println("Failed to get cookie", err)
+		session := data.Session{Uuid: cookie.Value}
+		session.DeleteByUUID()
+	}
+	http.Redirect(writer, request, "/", 302)
+}

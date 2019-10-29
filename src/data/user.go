@@ -102,3 +102,19 @@ func (user *User) Create() (err error) {
 
 	return
 }
+
+// Delete Session
+func (session *Session) DeleteByUUID() (err error) {
+	sql, err := readSqlFile("data/sql/delete_session_by_uuid.sql")
+	if err != nil {
+		return
+	}
+	stmt, err := Db.Prepare(sql)
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(session.Uuid)
+	return
+}
