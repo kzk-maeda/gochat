@@ -1,3 +1,4 @@
 # .vscode
 docker/database
 docker/database/*
+src/*.log
