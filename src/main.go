@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"main/api"
 )
 
 func main() {
@@ -25,6 +27,9 @@ func main() {
 	mux.HandleFunc("/thread/read", httpLog(readThread))
 	mux.HandleFunc("/thread/create", httpLog(createThread))
 	mux.HandleFunc("/thread/post", httpLog(postThread))
+
+	// API
+	mux.HandleFunc("/api/index", httpLog(api.Index))
 
 	server := &http.Server{
 		Addr:           config.Address,
