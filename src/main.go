@@ -13,18 +13,18 @@ func main() {
 	files := http.FileServer(http.Dir("public/"))
 	mux.Handle("/static/", http.StripPrefix("/static/", files))
 
-	mux.HandleFunc("/", index)
+	mux.HandleFunc("/", httpLog(index))
 
-	mux.HandleFunc("/login", login)
-	mux.HandleFunc("/signup", signup)
-	mux.HandleFunc("/signup_account", signupAccount)
-	mux.HandleFunc("/authenticate", authenticate)
-	mux.HandleFunc("/logout", logout)
+	mux.HandleFunc("/login", httpLog(login))
+	mux.HandleFunc("/signup", httpLog(signup))
+	mux.HandleFunc("/signup_account", httpLog(signupAccount))
+	mux.HandleFunc("/authenticate", httpLog(authenticate))
+	mux.HandleFunc("/logout", httpLog(logout))
 
-	mux.HandleFunc("/thread/new", newThread)
-	mux.HandleFunc("/thread/read", readThread)
-	mux.HandleFunc("/thread/create", createThread)
-	mux.HandleFunc("/thread/post", postThread)
+	mux.HandleFunc("/thread/new", httpLog(newThread))
+	mux.HandleFunc("/thread/read", httpLog(readThread))
+	mux.HandleFunc("/thread/create", httpLog(createThread))
+	mux.HandleFunc("/thread/post", httpLog(postThread))
 
 	server := &http.Server{
 		Addr:           config.Address,
