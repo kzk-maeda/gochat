@@ -1,4 +1,4 @@
-package main
+package util
 
 import (
 	"encoding/json"
@@ -18,7 +18,7 @@ type Configuration struct {
 	Static       string
 }
 
-var config Configuration
+var Config Configuration
 var logger *log.Logger
 
 func init() {
@@ -36,14 +36,14 @@ func loadConfig() {
 		fmt.Println("Cannot open config file", err)
 	}
 	decoder := json.NewDecoder(file)
-	config = Configuration{}
-	err = decoder.Decode(&config)
+	Config = Configuration{}
+	err = decoder.Decode(&Config)
 	if err != nil {
 		fmt.Println("Cannot get configuration from file", err)
 	}
 }
 
-func session(writer http.ResponseWriter, request *http.Request) (sess data.Session, err error) {
+func Session(writer http.ResponseWriter, request *http.Request) (sess data.Session, err error) {
 	cookie, err := request.Cookie("_cookie")
 	// fmt.Println("cookie:", cookie.Value, " session:", sess, " error:", err)
 	if err == nil {
@@ -57,7 +57,16 @@ func session(writer http.ResponseWriter, request *http.Request) (sess data.Sessi
 	return
 }
 
-func parseTemplateFiles(filenames ...string) (t *template.Template) {
+func APISession(session_id string) (sess data.Session, err error) {
+	sess = data.Session{Uuid: session_id}
+	if ok, _ := sess.Check(); !ok {
+		err = errors.New("Invalid session")
+		fmt.Println("Invalid session")
+	}
+	return
+}
+
+func ParseTemplateFiles(filenames ...string) (t *template.Template) {
 	var files []string
 	t = template.New("layout")
 	for _, file := range filenames {
@@ -67,7 +76,7 @@ func parseTemplateFiles(filenames ...string) (t *template.Template) {
 	return
 }
 
-func generateHTML(writer http.ResponseWriter, data interface{}, filenames ...string) {
+func GenerateHTML(writer http.ResponseWriter, data interface{}, filenames ...string) {
 	var files []string
 	for _, file := range filenames {
 		files = append(files, fmt.Sprintf("templates/%s.html", file))
@@ -94,6 +103,6 @@ func warning(args ...interface{}) {
 }
 
 // version
-func version() string {
+func Version() string {
 	return "0.1"
 }

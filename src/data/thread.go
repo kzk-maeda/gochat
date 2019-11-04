@@ -4,23 +4,6 @@ import (
 	"time"
 )
 
-type Thread struct {
-	Id        int
-	Uuid      string
-	Topic     string
-	UserId    int
-	CreatedAt time.Time
-}
-
-type Post struct {
-	Id        int
-	Uuid      string
-	Body      string
-	UserId    int
-	ThreadId  int
-	CreatedAt time.Time
-}
-
 // Get All Threads in the database and returns it
 func Threads() (threads []Thread, err error) {
 	sql, err := readSqlFile("data/sql/select_threads.sql")
@@ -59,22 +42,6 @@ func (user *User) CreateThread(topic string) (conv Thread, err error) {
 	return
 }
 
-// Create a new post to a thread
-func (user *User) CreatePost(conv Thread, body string) (post Post, err error) {
-	sql, err := readSqlFile("data/sql/insert_post.sql")
-	if err != nil {
-		return
-	}
-	stmt, err := Db.Prepare(sql)
-	if err != nil {
-		return
-	}
-	defer stmt.Close()
-	err = stmt.QueryRow(createUUID(), body, user.Id, conv.Id, time.Now()).
-		Scan(&post.Id, &post.Uuid, &post.Body, &post.UserId, &post.ThreadId, &post.CreatedAt)
-	return
-}
-
 // Get thread by UUID
 func ThreadByUUID(uuid string) (conv Thread, err error) {
 	conv = Thread{}
@@ -84,6 +51,18 @@ func ThreadByUUID(uuid string) (conv Thread, err error) {
 	}
 	err = Db.QueryRow(sql, uuid).
 		Scan(&conv.Id, &conv.Uuid, &conv.Topic, &conv.UserId, &conv.CreatedAt)
+	return
+}
+
+// Get the user who started this thread
+func (thread *Thread) User() (user User) {
+	user = User{}
+	sql, err := readSqlFile("data/sql/select_user_by_id.sql")
+	if err != nil {
+		return
+	}
+	Db.QueryRow(sql, thread.UserId).
+		Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.CreatedAt)
 	return
 }
 
@@ -105,29 +84,6 @@ func (thread *Thread) Posts() (posts []Post, err error) {
 		posts = append(posts, post)
 	}
 	rows.Close()
-	return
-}
-
-// Get the user who started this thread
-func (thread *Thread) User() (user User) {
-	user = User{}
-	sql, err := readSqlFile("data/sql/select_user_by_id.sql")
-	if err != nil {
-		return
-	}
-	Db.QueryRow(sql, thread.UserId).
-		Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.CreatedAt)
-	return
-}
-
-func (post *Post) User() (user User) {
-	user = User{}
-	sql, err := readSqlFile("data/sql/select_user_by_id.sql")
-	if err != nil {
-		return
-	}
-	Db.QueryRow(sql, post.UserId).
-		Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.CreatedAt)
 	return
 }
 
