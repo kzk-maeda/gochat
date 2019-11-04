@@ -34,6 +34,8 @@ func main() {
 	mux.HandleFunc("/api/authenticate", httpLog(api.Authenticate))
 	mux.HandleFunc("/api/logout", httpLog(api.Logout))
 
+	mux.HandleFunc("/api/thread/list", httpLog(api.ListThread))
+	mux.HandleFunc("/api/thread/get", httpLog(api.GetThread))
 	mux.HandleFunc("/api/thread/create", httpLog(api.CreateThread))
 
 	server := &http.Server{
