@@ -32,6 +32,7 @@ func main() {
 	// API
 	mux.HandleFunc("/api/index", httpLog(api.Index))
 	mux.HandleFunc("/api/authenticate", httpLog(api.Authenticate))
+	mux.HandleFunc("/api/logout", httpLog(api.Logout))
 
 	server := &http.Server{
 		Addr:           util.Config.Address,

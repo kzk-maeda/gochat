@@ -42,3 +42,16 @@ func Authenticate(writer http.ResponseWriter, request *http.Request) {
 	}
 	writer.Write(output)
 }
+
+func Logout(writer http.ResponseWriter, request *http.Request) {
+	err := request.ParseForm()
+	if err != nil {
+		fmt.Println(err)
+	}
+	session_id := request.Form.Get("session_id")
+	session := data.Session{Uuid: session_id}
+	err = session.DeleteByUUID()
+	if err != nil {
+		fmt.Println(err)
+	}
+}
