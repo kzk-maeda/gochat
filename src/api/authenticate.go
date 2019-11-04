@@ -44,14 +44,19 @@ func Authenticate(writer http.ResponseWriter, request *http.Request) {
 }
 
 func Logout(writer http.ResponseWriter, request *http.Request) {
-	err := request.ParseForm()
-	if err != nil {
-		fmt.Println(err)
-	}
-	session_id := request.Form.Get("session_id")
+	session_id, _ := getSessionId(request)
 	session := data.Session{Uuid: session_id}
-	err = session.DeleteByUUID()
+	err := session.DeleteByUUID()
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+func getSessionId(request *http.Request) (session_id string, err error) {
+	err = request.ParseForm()
+	if err != nil {
+		fmt.Println(err)
+	}
+	session_id = request.Form.Get("session_id")
+	return
 }

@@ -57,6 +57,15 @@ func Session(writer http.ResponseWriter, request *http.Request) (sess data.Sessi
 	return
 }
 
+func APISession(session_id string) (sess data.Session, err error) {
+	sess = data.Session{Uuid: session_id}
+	if ok, _ := sess.Check(); !ok {
+		err = errors.New("Invalid session")
+		fmt.Println("Invalid session")
+	}
+	return
+}
+
 func ParseTemplateFiles(filenames ...string) (t *template.Template) {
 	var files []string
 	t = template.New("layout")
