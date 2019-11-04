@@ -37,6 +37,7 @@ func main() {
 	mux.HandleFunc("/api/thread/list", httpLog(api.ListThread))
 	mux.HandleFunc("/api/thread/get", httpLog(api.GetThread))
 	mux.HandleFunc("/api/thread/create", httpLog(api.CreateThread))
+	mux.HandleFunc("/api/thread/post", httpLog(api.PostThread))
 
 	server := &http.Server{
 		Addr:           util.Config.Address,

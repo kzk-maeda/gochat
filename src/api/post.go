@@ -82,5 +82,32 @@ func GetThread(writer http.ResponseWriter, request *http.Request) {
 }
 
 func PostThread(writer http.ResponseWriter, request *http.Request) {
-
+	session_id, _ := getSessionId(request)
+	sess, err := util.APISession(session_id)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(sess)
+		err = request.ParseForm()
+		user, err := sess.User()
+		if err != nil {
+			fmt.Println(err, "Cannot get user from session")
+		}
+		body := request.Form.Get("body")
+		thread_id := request.Form.Get("thread_id")
+		thread, err := data.ThreadByUUID(thread_id)
+		if err != nil {
+			fmt.Println("Cannot read thread")
+		}
+		var post = data.Post{}
+		if post, err = user.CreatePost(thread, body); err != nil {
+			fmt.Println("Cannot Create Post")
+		}
+		writer.Header().Set("Content-Type", "application/json")
+		output, err := json.MarshalIndent(&post, "", "\t\t")
+		if err != nil {
+			fmt.Println(err)
+		}
+		writer.Write(output)
+	}
 }
