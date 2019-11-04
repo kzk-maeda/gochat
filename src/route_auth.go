@@ -5,19 +5,20 @@ import (
 	"net/http"
 
 	"main/data"
+	"main/util"
 )
 
 // GET /login
 func login(writer http.ResponseWriter, request *http.Request) {
 	fmt.Println("route /login")
-	t := parseTemplateFiles("login", "login.layout", "public.navbar")
+	t := util.ParseTemplateFiles("login", "login.layout", "public.navbar")
 	t.Execute(writer, nil)
 }
 
 // GET /signup
 func signup(writer http.ResponseWriter, request *http.Request) {
 	fmt.Println("route /signup")
-	generateHTML(writer, nil, "login.layout", "public.navbar", "signup")
+	util.GenerateHTML(writer, nil, "login.layout", "public.navbar", "signup")
 }
 
 // POST signup
@@ -32,6 +33,7 @@ func signupAccount(writer http.ResponseWriter, request *http.Request) {
 		Email:    request.PostFormValue("email"),
 		Password: request.PostFormValue("password"),
 	}
+	fmt.Println("DEBUG : ", request.PostFormValue("name"), request.PostFormValue("email"), request.PostFormValue("password"))
 	if err := user.Create(); err != nil {
 		fmt.Println("err ", err)
 	}

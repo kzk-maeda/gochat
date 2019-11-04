@@ -3,22 +3,23 @@ package main
 import (
 	"fmt"
 	"main/data"
+	"main/util"
 	"net/http"
 )
 
 // GET /thread/new
 func newThread(writer http.ResponseWriter, request *http.Request) {
-	_, err := session(writer, request)
+	_, err := util.Session(writer, request)
 	if err != nil {
 		http.Redirect(writer, request, "/login", 302)
 	} else {
-		generateHTML(writer, nil, "layout", "private.navbar", "new.thread")
+		util.GenerateHTML(writer, nil, "layout", "private.navbar", "new.thread")
 	}
 }
 
 // POST /thread/create
 func createThread(writer http.ResponseWriter, request *http.Request) {
-	sess, err := session(writer, request)
+	sess, err := util.Session(writer, request)
 	if err != nil {
 		http.Redirect(writer, request, "/login", 302)
 	} else {
@@ -50,18 +51,18 @@ func readThread(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		fmt.Println(err, " Cannot read thread")
 	} else {
-		_, err := session(writer, request)
+		_, err := util.Session(writer, request)
 		if err != nil {
-			generateHTML(writer, &thread, "layout", "public.navbar", "public.thread")
+			util.GenerateHTML(writer, &thread, "layout", "public.navbar", "public.thread")
 		} else {
-			generateHTML(writer, &thread, "layout", "private.navbar", "private.thread")
+			util.GenerateHTML(writer, &thread, "layout", "private.navbar", "private.thread")
 		}
 	}
 }
 
 // POST /thread/post
 func postThread(writer http.ResponseWriter, request *http.Request) {
-	sess, err := session(writer, request)
+	sess, err := util.Session(writer, request)
 	if err != nil {
 		http.Redirect(writer, request, "/login", 302)
 	} else {

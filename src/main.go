@@ -6,10 +6,11 @@ import (
 	"time"
 
 	"main/api"
+	"main/util"
 )
 
 func main() {
-	fmt.Println("GoChat", version(), "started at", config.Address)
+	fmt.Println("GoChat", util.Version(), "started at", util.Config.Address)
 
 	mux := http.NewServeMux()
 	files := http.FileServer(http.Dir("public/"))
@@ -30,12 +31,13 @@ func main() {
 
 	// API
 	mux.HandleFunc("/api/index", httpLog(api.Index))
+	mux.HandleFunc("/api/authenticate", httpLog(api.Authenticate))
 
 	server := &http.Server{
-		Addr:           config.Address,
+		Addr:           util.Config.Address,
 		Handler:        mux,
-		ReadTimeout:    time.Duration(config.ReadTimeout * int64(time.Second)),
-		WriteTimeout:   time.Duration(config.WriteTimeout * int64(time.Second)),
+		ReadTimeout:    time.Duration(util.Config.ReadTimeout * int64(time.Second)),
+		WriteTimeout:   time.Duration(util.Config.WriteTimeout * int64(time.Second)),
 		MaxHeaderBytes: 1 << 20,
 	}
 	server.ListenAndServe()

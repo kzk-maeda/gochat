@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"main/data"
+	"main/util"
 	"net/http"
 )
 
@@ -12,11 +13,11 @@ func index(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		fmt.Println("Cannot get threads", err)
 	} else {
-		_, err := session(writer, request)
+		_, err := util.Session(writer, request)
 		if err != nil {
-			generateHTML(writer, threads, "layout", "public.navbar", "index")
+			util.GenerateHTML(writer, threads, "layout", "public.navbar", "index")
 		} else {
-			generateHTML(writer, threads, "layout", "private.navbar", "index")
+			util.GenerateHTML(writer, threads, "layout", "private.navbar", "index")
 		}
 	}
 }

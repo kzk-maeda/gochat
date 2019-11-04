@@ -4,14 +4,6 @@ import (
 	"time"
 )
 
-type Thread struct {
-	Id        int
-	Uuid      string
-	Topic     string
-	UserId    int
-	CreatedAt time.Time
-}
-
 // Get All Threads in the database and returns it
 func Threads() (threads []Thread, err error) {
 	sql, err := readSqlFile("data/sql/select_threads.sql")

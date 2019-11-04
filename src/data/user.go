@@ -5,23 +5,6 @@ import (
 	"time"
 )
 
-type User struct {
-	Id        int
-	Uuid      string
-	Name      string
-	Email     string
-	Password  string
-	CreatedAt time.Time
-}
-
-type Session struct {
-	Id        int
-	Uuid      string
-	Email     string
-	UserId    int
-	CreatedAt time.Time
-}
-
 // Create a new session for an existing user
 func (user *User) CreateSession() (session Session, err error) {
 	sql, err := readSqlFile("data/sql/insert_session.sql")
@@ -95,6 +78,8 @@ func (user *User) Create() (err error) {
 		return
 	}
 	defer stmt.Close()
+
+	fmt.Println("DEBUG(DB) : ", user.Name, user.Email, Encrypt(user.Password))
 
 	err = stmt.QueryRow(createUUID(), user.Name, user.Email, Encrypt(user.Password), time.Now()).
 		Scan(&user.Id, &user.Uuid, &user.CreatedAt)

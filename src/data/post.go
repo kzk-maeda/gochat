@@ -4,17 +4,8 @@ import (
 	"time"
 )
 
-type Post struct {
-	Id        int
-	Uuid      string
-	Body      string
-	UserId    int
-	ThreadId  int
-	CreatedAt time.Time
-}
-
 // Retrive One Post
-func retrieve(id int) (post Post, err error) {
+func RetrievePost(id int) (post Post, err error) {
 	post = Post{}
 	sql, err := readSqlFile("data/sql/select_post_by_id.sql")
 	if err != nil {
@@ -38,6 +29,26 @@ func (user *User) CreatePost(conv Thread, body string) (post Post, err error) {
 	defer stmt.Close()
 	err = stmt.QueryRow(createUUID(), body, user.Id, conv.Id, time.Now()).
 		Scan(&post.Id, &post.Uuid, &post.Body, &post.UserId, &post.ThreadId, &post.CreatedAt)
+	return
+}
+
+// Update the post
+func (post *Post) UpdatePost(body string) (err error) {
+	sql, err := readSqlFile("data/sql/update_post.sql")
+	if err != nil {
+		return
+	}
+	_, err = Db.Exec(sql, post.Id, body, time.Now())
+	return
+}
+
+// Delete the post
+func (post *Post) DeletePost() (err error) {
+	sql, err := readSqlFile("data/sql/delete_post.sql")
+	if err != nil {
+		return
+	}
+	_, err = Db.Exec(sql, post.Id)
 	return
 }
 
